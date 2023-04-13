@@ -9,7 +9,7 @@ const pixelRatio = window.devicePixelRatio;
 
 //좌표구성
 let canvasLines = [];
-let drawnLine = [];
+let drawnLine = [[], []];
 let selectedLines = [];
 let selectedLinesIndex = [];
 let imageOutLine = {
@@ -121,12 +121,14 @@ function drawSelection() {
 function getSelectedLines() {
   const selectedLines = [];
   for (const line of canvasLines) {
-    for (const coord of line) {
+    for (let i = 0; i < line[0].length; i++) {
+      const x = line[0][i];
+      const y = line[1][i];
       if (
-        coord.x >= selectionRect.x &&
-        coord.x <= selectionRect.x + selectionRect.width &&
-        coord.y >= selectionRect.y &&
-        coord.y <= selectionRect.y + selectionRect.height
+        x >= selectionRect.x &&
+        x <= selectionRect.x + selectionRect.width &&
+        y >= selectionRect.y &&
+        y <= selectionRect.y + selectionRect.height
       ) {
         selectedLines.push(line);
         break;
@@ -156,7 +158,7 @@ function endPosition() {
   drawing = false;
   ctx.beginPath(); // 새로운 경로를 만듬
   canvasLines.push(drawnLine);
-  drawnLine = [];
+  drawnLine = [[], []];
   drawOutLine(canvasLines);
 }
 
@@ -170,8 +172,8 @@ function draw(e) {
   ctx.stroke(); //윤곽선을 이용하여 도형을 그림
   ctx.beginPath(); // 새로운 경로를 만듬
   ctx.moveTo(pos.x, pos.y);
-  drawnLine.push({ x: pos.x, y: pos.y });
-  // drawnLine.push([pos.x, pos.y]);
+  drawnLine[0].push(pos.x);
+  drawnLine[1].push(pos.y);
 }
 
 function getMousePos(canvas, e) {
@@ -196,11 +198,13 @@ function drawOutLine(lines) {
   };
 
   for (const line of lines) {
-    for (const coord of line) {
-      minX = Math.min(minX, coord.x);
-      minY = Math.min(minY, coord.y);
-      maxX = Math.max(maxX, coord.x);
-      maxY = Math.max(maxY, coord.y);
+    for (let i = 0; i < line[0].length; i++) {
+      const x = line[0][i];
+      const y = line[1][i];
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
     }
   }
   outLineRect = {
@@ -249,11 +253,13 @@ function deleteDrawing() {
 }
 
 function redraw(line) {
-  for (let i = 0; i < line.length; i++) {
-    ctx.lineTo(line[i].x, line[i].y);
+  for (let i = 0; i < line[0].length; i++) {
+    const x = line[0][i];
+    const y = line[1][i];
+    ctx.lineTo(x, y);
     ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(line[i].x, line[i].y);
+    ctx.moveTo(x, y);
   }
   ctx.beginPath();
 }
