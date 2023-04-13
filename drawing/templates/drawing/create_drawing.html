@@ -1,0 +1,31 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static "css/create_drawing.css" %}">
+    <title>Freehand Drawing App</title>
+  </head>
+  <body>
+    <div class="controls" style="margin-top: 15px">
+      <button id="clearCanvas">Clear Canvas</button>
+      <button id="drawImage">drawing</button>
+      <button id="selectImage">select Image</button>
+      <button id="delete">delete</button>
+      <button id="viewArray">view Array</button>
+    </div>
+    <div class="canvas-container">
+      <canvas
+        id="drawingCanvas1"
+        style="position: absolute; left: 0; top: 0; z-index: 1"
+      ></canvas>
+      <canvas
+        id="drawingCanvas2"
+        style="position: absolute; left: 0; top: 0; z-index: 0"
+      ></canvas>
+    </div>
+    <script src="{% static 'js/drawing.js' %}"></script>
+  </body>
+</html>
