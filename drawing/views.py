@@ -12,7 +12,7 @@ def create_drawing(request):
     if request.method == "POST":
         data = json.loads(request.body)
         print("received data: ", data)
-        canvas_lines = data.get("preprocessedLines", [])
+        canvas_lines = data.get("processedLines", [])
         print("canvasLine: ", canvas_lines)
         result = drawing_predict(canvas_lines)
         return JsonResponse({"result": result})

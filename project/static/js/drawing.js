@@ -200,6 +200,10 @@ function getMousePos(canvas, e) {
 }
 
 function drawOutLine(lines) {
+  minX = Infinity;
+  minY = Infinity;
+  maxX = -Infinity;
+  maxY = -Infinity;
   for (const line of lines) {
     for (let i = 0; i < line[0].length; i++) {
       const x = line[0][i];
@@ -232,21 +236,11 @@ function drawOutLine(lines) {
 function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-  canvasLines = [
-    [
-      [2, 2, 20, 23, 62, 134, 195, 210, 217, 221, 218, 197, 186, 184],
-      [255, 165, 5, 1, 0, 5, 20, 26, 33, 53, 80, 194, 224, 220],
-    ],
-    [
-      [170, 166, 158, 151, 154, 160, 168, 167, 158, 151],
-      [128, 125, 126, 136, 150, 155, 147, 126, 127, 142],
-    ],
-    [
-      [191, 182],
-      [208, 251],
-    ],
-  ];
-
+  canvasLines = [];
+  minX = Infinity;
+  minY = Infinity;
+  maxX = -Infinity;
+  maxY = -Infinity;
   console.log("클리어 한 후 canvasLines: ", canvasLines);
   canvasLines.map((line, index) => {
     redraw(line);
@@ -295,8 +289,6 @@ function relativeCoordinates(lines) {
     for (let i = 0; i < line[0].length; i += 3) {
       const x = Math.round(((line[0][i] - minX) / drawLengthX) * 255);
       const y = Math.round(((line[1][i] - minY) / drawLengthY) * 255);
-      // line[0][i] = x;
-      // line[1][i] = y;
       tempLine[0].push(x);
       tempLine[1].push(y);
     }
@@ -307,32 +299,19 @@ function relativeCoordinates(lines) {
 }
 
 async function autoDraw() {
-  const preprocessedLines = relativeCoordinates(canvasLines);
-  console.log("좌표: ", preprocessedLines);
-  // canvasLines = [
-  //   [
-  //     [
-  //       55, 67, 77, 135, 153, 159, 160, 168, 191, 202, 196, 181, 158, 0, 95,
-  //       178, 244, 231, 84, 64, 51,
-  //     ],
-  //     [
-  //       242, 223, 197, 31, 0, 25, 65, 114, 218, 254, 239, 220, 201, 118, 114,
-  //       103, 90, 111, 207, 229, 254,
-  //     ],
-  //   ],
-  // ];
-
+  const processedLines = relativeCoordinates(canvasLines);
+  console.log("좌표: ", processedLines);
   try {
     const response = await fetch("http://127.0.0.1:8000/drawing/create/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ preprocessedLines }),
+      body: JSON.stringify({ processedLines }),
     });
     const result = await response.json();
     console.log("Result from Django server:", result);
-    preprocessedLines.map((line) => {
+    processedLines.map((line) => {
       redraw(line);
     });
   } catch (error) {
