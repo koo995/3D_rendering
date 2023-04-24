@@ -5,6 +5,7 @@ const selectImageButton = document.getElementById("selectImage");
 const drawImageButton = document.getElementById("drawImage");
 const deleteButton = document.getElementById("delete");
 const viewArrayButton = document.getElementById("viewArray");
+const autoDrawButton = document.getElementById("autoDraw");
 const pixelRatio = window.devicePixelRatio;
 
 //좌표구성
@@ -13,6 +14,19 @@ let drawnLine = [[], []];
 let selectedLines = [];
 let selectedLinesIndex = [];
 let imageOutLine = {
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+};
+//전체 라인에서 최소 최대 좌표값
+let minX = Infinity;
+let minY = Infinity;
+let maxX = -Infinity;
+let maxY = -Infinity;
+
+//아웃라인 사각형
+let outLineRect = {
   x: 0,
   y: 0,
   width: 0,
@@ -186,17 +200,6 @@ function getMousePos(canvas, e) {
 }
 
 function drawOutLine(lines) {
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-  let outLineRect = {
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-  };
-
   for (const line of lines) {
     for (let i = 0; i < line[0].length; i++) {
       const x = line[0][i];
@@ -229,7 +232,25 @@ function drawOutLine(lines) {
 function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-  canvasLines = [];
+  canvasLines = [
+    [
+      [2, 2, 20, 23, 62, 134, 195, 210, 217, 221, 218, 197, 186, 184],
+      [255, 165, 5, 1, 0, 5, 20, 26, 33, 53, 80, 194, 224, 220],
+    ],
+    [
+      [170, 166, 158, 151, 154, 160, 168, 167, 158, 151],
+      [128, 125, 126, 136, 150, 155, 147, 126, 127, 142],
+    ],
+    [
+      [191, 182],
+      [208, 251],
+    ],
+  ];
+
+  console.log("클리어 한 후 canvasLines: ", canvasLines);
+  canvasLines.map((line, index) => {
+    redraw(line);
+  });
 }
 
 function viewImageCoord() {
@@ -264,11 +285,67 @@ function redraw(line) {
   ctx.beginPath();
 }
 
+//좌표들의 전처리를 위함
+function relativeCoordinates(lines) {
+  let tempLines = [];
+  let tempLine = [[], []];
+  let drawLengthX = maxX - minX;
+  let drawLengthY = maxY - minY;
+  for (const line of lines) {
+    for (let i = 0; i < line[0].length; i += 3) {
+      const x = Math.round(((line[0][i] - minX) / drawLengthX) * 255);
+      const y = Math.round(((line[1][i] - minY) / drawLengthY) * 255);
+      // line[0][i] = x;
+      // line[1][i] = y;
+      tempLine[0].push(x);
+      tempLine[1].push(y);
+    }
+    tempLines.push(tempLine);
+    tempLine = [[], []];
+  }
+  return tempLines;
+}
+
+async function autoDraw() {
+  const preprocessedLines = relativeCoordinates(canvasLines);
+  console.log("좌표: ", preprocessedLines);
+  // canvasLines = [
+  //   [
+  //     [
+  //       55, 67, 77, 135, 153, 159, 160, 168, 191, 202, 196, 181, 158, 0, 95,
+  //       178, 244, 231, 84, 64, 51,
+  //     ],
+  //     [
+  //       242, 223, 197, 31, 0, 25, 65, 114, 218, 254, 239, 220, 201, 118, 114,
+  //       103, 90, 111, 207, 229, 254,
+  //     ],
+  //   ],
+  // ];
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/drawing/create/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ preprocessedLines }),
+    });
+    const result = await response.json();
+    console.log("Result from Django server:", result);
+    preprocessedLines.map((line) => {
+      redraw(line);
+    });
+  } catch (error) {
+    console.error("Error :", error);
+  }
+}
+
 clearCanvasButton.addEventListener("click", clearCanvas);
 selectImageButton.addEventListener("click", selectionModeOn);
 drawImageButton.addEventListener("click", drawImageModeOn);
 deleteButton.addEventListener("click", deleteDrawing);
 viewArrayButton.addEventListener("click", viewImageCoord);
+autoDrawButton.addEventListener("click", autoDraw);
 canvas.addEventListener("mousedown", (e) => {
   if (selectionMode) {
     startSelection(e);
