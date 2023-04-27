@@ -19,11 +19,19 @@ let imageOutLine = {
   width: 0,
   height: 0,
 };
-//전체 라인에서 최소 최대 좌표값
-let minX = Infinity;
-let minY = Infinity;
-let maxX = -Infinity;
-let maxY = -Infinity;
+//전체 canvasLines 중에서 최소 최대 좌표값
+const minmaxInitState = {
+  minX: Infinity,
+  minY: Infinity,
+  maxX: -Infinity,
+  maxY: -Infinity,
+};
+let minmaxState = {
+  minX: null,
+  minY: null,
+  maxX: null,
+  maxY: null,
+};
 
 //아웃라인 사각형
 let outLineRect = {
@@ -66,11 +74,11 @@ function selectionModeOn() {
 
 function drawImageModeOn() {
   selectionMode = false;
+  canvas.style.cursor = "default";
   selectedLines = [];
   selectedLinesIndex = [];
   console.log("선택된 라인들이 있는가?", selectedLines);
   console.log("선택된 라인의 인덱스가 있는가?", selectedLinesIndex);
-  canvas.style.cursor = "default";
 }
 
 //selectionMode일때 사용될 함수
@@ -193,17 +201,13 @@ function draw(e) {
 function getMousePos(canvas, e) {
   const rect = canvas.getBoundingClientRect();
   return {
-    //
     x: e.clientX - rect.left,
     y: e.clientY - rect.top,
-  }; // representing the x and y coordinates of the mouse relative to the top-left corner of the canvas.
+  };
 }
 
-function drawOutLine(lines) {
-  minX = Infinity;
-  minY = Infinity;
-  maxX = -Infinity;
-  maxY = -Infinity;
+function findMinMax(lines) {
+  let { minX, minY, maxX, maxY } = minmaxInitState;
   for (const line of lines) {
     for (let i = 0; i < line[0].length; i++) {
       const x = line[0][i];
@@ -214,6 +218,15 @@ function drawOutLine(lines) {
       maxY = Math.max(maxY, y);
     }
   }
+  return { minX, minY, maxX, maxY };
+}
+
+function drawOutLine(lines) {
+  const { minX, minY, maxX, maxY } = findMinMax(lines);
+  if (!selectionMode) {
+    minmaxState = { minX, minY, maxX, maxY };
+  }
+  console.log("minmaxState: ", minmaxState);
   outLineRect = {
     ...outLineRect,
     x: minX - 10,
@@ -237,14 +250,10 @@ function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
   canvasLines = [];
-  minX = Infinity;
-  minY = Infinity;
-  maxX = -Infinity;
-  maxY = -Infinity;
+  minmaxState = {
+    ...minmaxInitState,
+  };
   console.log("클리어 한 후 canvasLines: ", canvasLines);
-  canvasLines.map((line, index) => {
-    redraw(line);
-  });
 }
 
 function viewImageCoord() {
@@ -254,9 +263,9 @@ function viewImageCoord() {
 
 //선택한 이미지 삭제후 재생성을 위함
 function deleteDrawing() {
+  const canvasLinesTemp = [];
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-  const canvasLinesTemp = [];
   canvasLines.map((line, index) => {
     if (!selectedLinesIndex.includes(index)) {
       redraw(line);
@@ -281,12 +290,13 @@ function redraw(line) {
 
 //좌표들의 전처리를 위함
 function relativeCoordinates(lines) {
+  const { minX, minY, maxX, maxY } = minmaxState;
   let tempLines = [];
   let tempLine = [[], []];
   let drawLengthX = maxX - minX;
   let drawLengthY = maxY - minY;
   for (const line of lines) {
-    for (let i = 0; i < line[0].length; i += 3) {
+    for (let i = 0; i < line[0].length; i += 4) {
       const x = Math.round(((line[0][i] - minX) / drawLengthX) * 255);
       const y = Math.round(((line[1][i] - minY) / drawLengthY) * 255);
       tempLine[0].push(x);
