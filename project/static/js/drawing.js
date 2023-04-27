@@ -206,7 +206,7 @@ function getMousePos(canvas, e) {
   };
 }
 
-function findMinMax(lines) {
+function getMinMaxCoord(lines) {
   let { minX, minY, maxX, maxY } = minmaxInitState;
   for (const line of lines) {
     for (let i = 0; i < line[0].length; i++) {
@@ -222,7 +222,7 @@ function findMinMax(lines) {
 }
 
 function drawOutLine(lines) {
-  const { minX, minY, maxX, maxY } = findMinMax(lines);
+  const { minX, minY, maxX, maxY } = getMinMaxCoord(lines);
   if (!selectionMode) {
     minmaxState = { minX, minY, maxX, maxY };
   }
