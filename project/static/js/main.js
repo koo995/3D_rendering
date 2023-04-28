@@ -2,10 +2,6 @@ import * as THREE from "https://cdn.skypack.dev/three@0.128.0/build/three.module
 import { OrbitControls } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/controls/OrbitControls.js";
 import { FBXLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/FBXLoader.js";
 
-// const width = 600;
-// const height = 600;
-// const width = window.innerWidth * 0.5;
-// const height = window.innerHeight * 0.5;
 const container = document.createElement("div");
 
 //scene
@@ -38,8 +34,6 @@ const camera = new THREE.PerspectiveCamera(
   1000
 );
 camera.position.set(2, 18, 28);
-// camera.aspect = width / height;
-// camera.updateProjectionMatrix();
 
 //controls
 const controls = new OrbitControls(camera, renderer.domElement);

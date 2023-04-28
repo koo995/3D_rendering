@@ -321,6 +321,10 @@ async function autoDraw() {
     });
     const result = await response.json();
     console.log("Result from Django server:", result);
+    const newWindow = window.open("", "_blank");
+    newWindow.document.write(result.new_html_content);
+    newWindow.document.close();
+    //전처리된 이미지
     processedLines.map((line) => {
       redraw(line);
     });
