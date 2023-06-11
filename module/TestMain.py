@@ -43,8 +43,11 @@ def f2cat(filename: str) -> str:
 
 
 def list_all_categories():
-    files = os.listdir(os.path.join(INPUT_DIR, "train_simplified_sj"))
-    return sorted([f2cat(f) for f in files], key=str.lower)
+    # files = os.listdir(os.path.join(INPUT_DIR, "train_simplified_sj"))
+    # return sorted([f2cat(f) for f in files], key=str.lower)
+    f = open(os.path.join(INPUT_DIR, "simplified_categories.txt"), "r")
+    cats = f.readlines()
+    return sorted([cat.strip() for cat in cats], key=str.lower)
 
 
 def _stack_it(raw_strokes):
