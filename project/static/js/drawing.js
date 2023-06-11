@@ -6,7 +6,6 @@ const drawImageButton = document.getElementById("drawImage");
 const deleteButton = document.getElementById("delete");
 const viewArrayButton = document.getElementById("viewArray");
 const autoDrawButton = document.getElementById("autoDraw");
-const pixelRatio = window.devicePixelRatio;
 
 //좌표구성
 let canvasLines = [];
@@ -321,13 +320,17 @@ async function autoDraw() {
     });
     const result = await response.json();
     console.log("Result from Django server:", result);
-    const newWindow = window.open("", "_blank");
+    const newWindow = window.open(
+      "",
+      "_blank",
+      "width=500, height=500, menubar=no, status=no, toolbar=no"
+    );
     newWindow.document.write(result.new_html_content);
     newWindow.document.close();
     //전처리된 이미지
-    processedLines.map((line) => {
-      redraw(line);
-    });
+    // processedLines.map((line) => {
+    //   redraw(line);
+    // });
   } catch (error) {
     console.error("Error :", error);
   }
