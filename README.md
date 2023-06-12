@@ -4,3 +4,5 @@
 <hr>
 <h3>dataset은 track 하지않도록 변경</h3>
 "git rm -r --cached {파일/폴더명}"으로 Untrack상태로 만들고 .gitignore에 파일/폴더명 추가 후 .gitignore 커밋
+하지만 여전히 다른 commit에 dataset은 기록되어 있음. 모든 commit에서 dataset에 대한 커밋을 제거할 필요가 있다.
+git filter-branch -f --index-filter "git rm -r --cached --ignore-unmatch ./module/train_simplified_sj" --prune-empty -- --all
