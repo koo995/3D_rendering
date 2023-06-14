@@ -260,7 +260,7 @@ function viewImageCoord() {
   console.log("drawnLine: ", drawnLine);
 }
 
-//선택한 이미지 삭제후 재생성을 위함
+//선택한 이미지 삭제후 redraw을 위함
 function deleteDrawing() {
   const canvasLinesTemp = [];
   ctx.clearRect(0, 0, canvas.width, canvas.height);

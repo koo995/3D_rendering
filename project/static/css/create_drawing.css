@@ -8,15 +8,16 @@ body {
   flex-direction: column;
 }
 
+.controller {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+}
+
 canvas {
   border: 1px solid #000;
   margin-top: 100px;
   margin-left: 50px;
-}
-
-.controls {
-  display: flex;
-  align-items: center;
 }
 
 label {

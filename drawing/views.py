@@ -32,3 +32,8 @@ def create_model(request):
 def serve_fbx(request, filename):
     file_path = os.path.join(settings.BASE_DIR, "module/3d_model", filename)
     return FileResponse(open(file_path, "rb"), content_type="application/octet-stream")
+
+
+def redirect_view(request):
+    response = redirect("drawing:create_drawing")
+    return response
