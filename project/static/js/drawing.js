@@ -1,5 +1,5 @@
-const canvas = document.getElementById("drawingCanvas1");
-const ctx = canvas.getContext("2d"); //canvas의 컨텍스트?(렌더링될 그리기의 대상)을 얻습니다.
+const canvas = document.getElementById("drawingCanvas1"); //메인 그림은 canvas1에 그려준다
+const ctx = canvas.getContext("2d");
 const clearCanvasButton = document.getElementById("clearCanvas");
 const selectImageButton = document.getElementById("selectImage");
 const drawImageButton = document.getElementById("drawImage");
@@ -8,23 +8,19 @@ const viewArrayButton = document.getElementById("viewArray");
 const autoDrawButton = document.getElementById("autoDraw");
 
 //좌표구성
-let canvasLines = [];
-let drawnLine = [[], []];
-let selectedLines = [];
-let selectedLinesIndex = [];
-let imageOutLine = {
-  x: 0,
-  y: 0,
-  width: 0,
-  height: 0,
-};
-//전체 canvasLines 중에서 최소 최대 좌표값
+let canvasLines = []; // 현재 캔버스에 있는 모든 선들의 벡터
+let drawnLine = [[], []]; // 현 시점 그려지는 중인 선 x, y 벡터값이 마우스 움직임에따라 담겨짐
+let selectedLines = []; // 선택된 선들의 벡터
+let selectedLinesIndex = []; // 선택된 선들의 캔버스 전체에서 index값
+
+//전체 canvasLines 중에서 최소 최대 좌표값의 초기값의 설정의 위함
 const minmaxInitState = {
   minX: Infinity,
   minY: Infinity,
   maxX: -Infinity,
   maxY: -Infinity,
 };
+// 전체 canvasLines 중에서 최소 최대 좌표값
 let minmaxState = {
   minX: null,
   minY: null,
@@ -32,7 +28,7 @@ let minmaxState = {
   maxY: null,
 };
 
-//아웃라인 사각형
+// 전체 그림의 아웃라인 사각형
 let outLineRect = {
   x: 0,
   y: 0,
@@ -45,19 +41,20 @@ canvas.width = 1280;
 canvas.height = 1024;
 canvas.style.width = 1280 + "px";
 canvas.style.height = 1024 + "px";
-let drawing = false;
+let drawing = false; // 마우스 클릭 전까지는 아무것도 그려지면 안된다.
 let strokeColor = "black";
 
 //selection을 위해 사용될 변수
-const overlayCanvas = document.getElementById("drawingCanvas2");
+const overlayCanvas = document.getElementById("drawingCanvas2"); // canvas2에 그려준다.
 overlayCanvas.width = canvas.width;
 overlayCanvas.height = canvas.height;
 const overlayCtx = overlayCanvas.getContext("2d");
-overlayCtx.setLineDash([5, 5]);
+overlayCtx.setLineDash([5, 5]); // 선택영역은 점선으로
 overlayCtx.strokeStyle = "blue";
 overlayCtx.lineWidth = 2;
-let selectionMode = false;
+let selectionMode = false; // 버튼 클릭 전까지 default는 false
 let selectionRect = {
+  // 선택된 선들의 아웃라인 사각형
   x: 0,
   y: 0,
   width: 0,
@@ -65,15 +62,16 @@ let selectionRect = {
   isSelecting: false,
 };
 
-//두가지의 Mode selection/draw
+// selectionModeon true 이면 selection모드, false면 그리기 모드
 function selectionModeOn() {
   selectionMode = true;
   canvas.style.cursor = "crosshair";
 }
 
 function drawImageModeOn() {
-  selectionMode = false;
+  selectionMode = false; // selectionModeon true 이면 selection모드, false면 그리기 모드
   canvas.style.cursor = "default";
+  // 선택된 선들과 index 를 담는 변수를 초기화한다.
   selectedLines = [];
   selectedLinesIndex = [];
   console.log("선택된 라인들이 있는가?", selectedLines);
@@ -82,6 +80,7 @@ function drawImageModeOn() {
 
 //selectionMode일때 사용될 함수
 function startSelection(e) {
+  // selection 모드일때 mouse down event객체를 받는 콜백함수
   //selection사각형을 다시 초기화해줌
   selectionRect.x = 0;
   selectionRect.y = 0;
@@ -95,7 +94,7 @@ function startSelection(e) {
   selectionRect.width = 0;
   selectionRect.height = 0;
 }
-
+// selection 모드일때 마우스 움직임 event객체를 받는 콜백함수
 function updateSelection(e) {
   if (!selectionRect.isSelecting) return;
   const pos = getMousePos(overlayCanvas, e);
@@ -105,6 +104,7 @@ function updateSelection(e) {
 }
 
 function endSelection(e) {
+  //selection 모드일때 mouse up event객체를 받는 콜백함수
   const pos = getMousePos(overlayCanvas, e);
   //마우스가 시작점보다 왼쪽이나 위쪽에서 끝났을 경우 처리
   if (pos.x < selectionRect.x) {
@@ -122,12 +122,13 @@ function endSelection(e) {
   console.log("Selected lines: ", selectedLines);
   console.log("Selected line indexes of canvasLines: ", selectedLinesIndex);
   overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-
-  drawOutLine(selectedLines);
-  selectionRect.isSelecting = false;
+  drawOutLine(selectedLines); // 선택된 선들로 아웃라인 그려준다.
+  selectionRect.isSelecting = false; //selecting이 끝나서 false
 }
 
+// selection 영역을 그림
 function drawSelection() {
+  // 마우스 움직임에 따라 매번 새롭게  크기가 변화하는 사각형을 그려준다
   overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
   overlayCtx.beginPath();
   overlayCtx.strokeRect(
@@ -159,6 +160,8 @@ function getSelectedLines() {
   return selectedLines;
 }
 
+// 선택된 선들의 전체 그림에서의 index값을 찾음.
+// 선택된 선들을 삭제할시 전체 그림에서 선택된 index만 제거하기위함
 function findSelectedIndex() {
   const indexList = [];
   canvasLines.map((line, index) => {
@@ -169,30 +172,32 @@ function findSelectedIndex() {
   return indexList;
 }
 
-//그리기 모드일때 사용될 함수들
+//그리기 모드일때 마우스 down 콜백함수
 function startPosition(e) {
   drawing = true;
   draw(e);
 }
 
-function endPosition() {
+function endPosition(e) {
+  //그리기 모드일때 마우스 up 콜백함수
   drawing = false;
   ctx.beginPath(); // 새로운 경로를 만듬
-  canvasLines.push(drawnLine);
-  drawnLine = [[], []];
+  canvasLines.push(drawnLine); // 새롭게 그려진 라인을 전체 라인에 넣어줌
+  drawnLine = [[], []]; // 값을 넣어준 후 빈벡터로 초기화
   drawOutLine(canvasLines);
 }
 
 function draw(e) {
+  //그리기 모드일때 마우스 움직임에따라 선을 그리는 콜백함수
   if (!drawing) return;
   const pos = getMousePos(canvas, e);
   ctx.lineWidth = 5;
   ctx.lineCap = "round";
   ctx.strokeStyle = strokeColor;
-  ctx.lineTo(pos.x, pos.y); //현재 위치에서 지정된 지점까지 선을 그립니다.
-  ctx.stroke(); //윤곽선을 이용하여 도형을 그림
+  ctx.lineTo(pos.x, pos.y); //출발위치에서 도착점 지정
+  ctx.stroke(); // 출발지점에서 도착점까지 선을 그림
   ctx.beginPath(); // 새로운 경로를 만듬
-  ctx.moveTo(pos.x, pos.y);
+  ctx.moveTo(pos.x, pos.y); // 선의 출발점 지정
   drawnLine[0].push(pos.x);
   drawnLine[1].push(pos.y);
 }
@@ -205,6 +210,7 @@ function getMousePos(canvas, e) {
   };
 }
 
+// 넣어준 라인들중에서 최대 최소좌표값 반환
 function getMinMaxCoord(lines) {
   let { minX, minY, maxX, maxY } = minmaxInitState;
   for (const line of lines) {
@@ -220,6 +226,7 @@ function getMinMaxCoord(lines) {
   return { minX, minY, maxX, maxY };
 }
 
+//넣어준 라인들의 아웃라인을 그려줌
 function drawOutLine(lines) {
   const { minX, minY, maxX, maxY } = getMinMaxCoord(lines);
   if (!selectionMode) {
@@ -318,6 +325,7 @@ async function autoDraw() {
       },
       body: JSON.stringify({ processedLines }),
     });
+    // result는 3d_model.html 을 포함
     const result = await response.json();
     console.log("Result from Django server:", result);
     const newWindow = window.open(
@@ -327,10 +335,6 @@ async function autoDraw() {
     );
     newWindow.document.write(result.new_html_content);
     newWindow.document.close();
-    //전처리된 이미지
-    // processedLines.map((line) => {
-    //   redraw(line);
-    // });
   } catch (error) {
     console.error("Error :", error);
   }
