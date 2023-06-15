@@ -17,23 +17,24 @@ def create_drawing(request):
         print("received data: ", data)
         canvas_lines = data.get("processedLines", [])
         print("canvasLine: ", canvas_lines)
+        # 카테고리명을 얻음
         result = drawing_predict(canvas_lines)
-        new_html_content = render_to_string("drawing/3d_model.html", {"result": result})
+        # 얻은 카테고리명을 기반으로 3d모델을 나타낼 html파일을 생성
+        new_html_content = render_to_string(
+            "drawing/3d_model.html", {"category": result}
+        )
         return JsonResponse({"new_html_content": new_html_content})
     else:
         return render(request, "drawing/create_drawing.html")
 
 
-@csrf_exempt
-def create_model(request):
-    return render(request, "drawing/3d_model.html")
-
-
+# 3d_model.html에서 FBXLoader가 해당 카테고리의 fbx파일을 요청하면 전달
 def serve_fbx(request, filename):
     file_path = os.path.join(settings.BASE_DIR, "module/3d_model", filename)
     return FileResponse(open(file_path, "rb"), content_type="application/octet-stream")
 
 
+# root url로 들어왔을때 drawing/create 로 redirect 하기 위함
 def redirect_view(request):
     response = redirect("drawing:create_drawing")
     return response

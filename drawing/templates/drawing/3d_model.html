@@ -1,7 +1,7 @@
 {%load static %}
 <html>
   <head>
-    <title>{{result}}</title>
+    <title>{{category}}</title>
   </head>
   <body>
     <script type="module">
@@ -67,7 +67,7 @@
       //loader
       const loader = new FBXLoader();
       loader.load(
-        "/drawing/fbx/{{result}}.fbx",
+        "/drawing/fbx/{{category}}.fbx", // 해당주소의 fbx 파일을 요청시 서버에서 제공
         (object) => {
           scene.add(object);
           zoomFit(object, camera, "Z", true);
