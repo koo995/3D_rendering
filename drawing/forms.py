@@ -5,4 +5,4 @@ from .models import Drawing
 class DrawingForm(forms.ModelForm):
     class Meta:
         model = Drawing
-        fields = ["coordinates"]
+        fields = ["coordinates", "result"]

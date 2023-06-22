@@ -5,20 +5,31 @@ from django.conf import settings
 from django.template.loader import render_to_string
 import json
 import os
+import csv
 from django.http import FileResponse
-from django.template import RequestContext
 from module.TestMain import drawing_predict
+from .models import Drawing
 
 
 @csrf_exempt
 def create_drawing(request):
     if request.method == "POST":
         data = json.loads(request.body)
-        print("received data: ", data)
         canvas_lines = data.get("processedLines", [])
-        print("canvasLine: ", canvas_lines)
-        # 카테고리명을 얻음
-        result = drawing_predict(canvas_lines)
+        result = drawing_predict(canvas_lines)  # 카테고리명을 얻음
+        # 데이터베이스에 저장함
+        drawing = Drawing(
+            coordinates=canvas_lines, result=result
+        )  # Drawing이라는 models의 클래스를 초기화
+        drawing.save()
+        # csv파일에 저장함
+        csv_file = os.path.join(settings.BASE_DIR, "drawings.csv")
+        with open(csv_file, mode="a", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(
+                [json.dumps(canvas_lines), json.dumps(result), drawing.created_at]
+            )
+
         # 얻은 카테고리명을 기반으로 3d모델을 나타낼 html파일을 생성
         new_html_content = render_to_string(
             "drawing/3d_model.html", {"category": result}

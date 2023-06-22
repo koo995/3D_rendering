@@ -210,7 +210,7 @@ function getMousePos(canvas, e) {
   };
 }
 
-// 넣어준 라인들중에서 최대 최소좌표값 반환
+// 매개변수로 받은 라인들중에서 최대 최소좌표값 반환
 function getMinMaxCoord(lines) {
   let { minX, minY, maxX, maxY } = minmaxInitState;
   for (const line of lines) {
@@ -226,7 +226,7 @@ function getMinMaxCoord(lines) {
   return { minX, minY, maxX, maxY };
 }
 
-//넣어준 라인들의 아웃라인을 그려줌
+// 매개변수로 전달받은 라인들의 아웃라인을 그려줌
 function drawOutLine(lines) {
   const { minX, minY, maxX, maxY } = getMinMaxCoord(lines);
   if (!selectionMode) {
