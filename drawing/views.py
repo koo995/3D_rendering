@@ -17,12 +17,12 @@ def create_drawing(request):
         data = json.loads(request.body)
         canvas_lines = data.get("processedLines", [])
         result = drawing_predict(canvas_lines)  # 카테고리명을 얻음
-        # 데이터베이스에 저장함
+        # 데이터베이스에 저장
         drawing = Drawing(
             coordinates=canvas_lines, result=result
-        )  # Drawing이라는 models의 클래스를 초기화
+        )  # models.py 안에 있는 Drawing 클래스를 초기화
         drawing.save()
-        # csv파일에 저장함
+        # csv파일에 결과 저장
         csv_file = os.path.join(settings.BASE_DIR, "drawings.csv")
         with open(csv_file, mode="a", newline="") as file:
             writer = csv.writer(file)
@@ -39,7 +39,7 @@ def create_drawing(request):
         return render(request, "drawing/create_drawing.html")
 
 
-# 3d_model.html에서 FBXLoader가 해당 카테고리의 fbx파일을 요청하면 전달
+# 3d_model.html에서 FBXLoader가 해당 카테고리의 fbx파일의 url을 요청하면 실행
 def serve_fbx(request, filename):
     file_path = os.path.join(settings.BASE_DIR, "module/3d_model", filename)
     return FileResponse(open(file_path, "rb"), content_type="application/octet-stream")
@@ -47,5 +47,4 @@ def serve_fbx(request, filename):
 
 # root url로 들어왔을때 drawing/create 로 redirect 하기 위함
 def redirect_view(request):
-    response = redirect("drawing:create_drawing")
-    return response
+    return redirect("drawing:create_drawing")
