@@ -1,7 +1,7 @@
 import * as THREE from "https://cdn.skypack.dev/three@0.128.0/build/three.module.js";
 import { OrbitControls } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/controls/OrbitControls.js";
 import { FBXLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/FBXLoader.js";
-const container = document.createElement("div");
+const container = document.querySelector(".page-3d");
 
 //scene
 const scene = new THREE.Scene();
@@ -10,7 +10,7 @@ scene.background = new THREE.Color(0xe0e0e0);
 //renderder
 const renderer = new THREE.WebGLRenderer();
 renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(container.clientWidth, container.clientHeight);
 
 function zoomFit(object3D, camera, viewMode, bFront) {
   const box = new THREE.Box3().setFromObject(object3D);
@@ -72,10 +72,11 @@ loader.load(
 //camera
 const camera = new THREE.PerspectiveCamera(
   75,
-  window.innerWidth / window.innerHeight,
+  container.clientWidth / container.clientHeight,
   0.1,
   1000
 );
+
 camera.position.set(2, 18, 28);
 
 //controls
@@ -98,14 +99,13 @@ function animate() {
 }
 
 function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.aspect = container.clientWidth / container.clientHeight;
   camera.updateProjectionMatrix();
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(container.clientWidth, container.clientHeight);
 }
 
 animate();
 
 container.appendChild(renderer.domElement);
-document.body.appendChild(container);
 window.addEventListener("resize", onWindowResize);

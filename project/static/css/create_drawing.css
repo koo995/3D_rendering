@@ -49,14 +49,19 @@ canvas {
 
 .page-3d {
   border: 2px dotted black; /* Dotted border around the page-3d */
-  padding: 10px;
   display: flex;
-  width: 640px; /* Explicitly setting the width */
-  height: 480px;
+  width: 500px; /* Explicitly setting the width */
+  height: 500px;
   margin-top: 30px;
+  position: relative; /* This allows the absolute positioned canvas to be bound within this container */
   flex-direction: column;
   justify-content: center;
 }
+
+.page-3d canvas {
+  position: absolute; /* This allows the canvas to be positioned relative to the .page-3d container */
+}
+
 label {
   margin-right: 10px;
 }
