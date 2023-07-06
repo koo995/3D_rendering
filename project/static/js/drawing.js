@@ -37,10 +37,10 @@ let outLineRect = {
 };
 
 //캔버스 디폴트세팅
-canvas.width = 1280;
-canvas.height = 1024;
-canvas.style.width = 1280 + "px";
-canvas.style.height = 1024 + "px";
+canvas.width = 640;
+canvas.height = 480;
+canvas.style.width = 640 + "px";
+canvas.style.height = 480 + "px";
 let drawing = false; // 마우스 클릭 전까지는 아무것도 그려지면 안된다.
 let strokeColor = "black";
 
