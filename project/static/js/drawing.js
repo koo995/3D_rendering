@@ -37,17 +37,17 @@ let outLineRect = {
 };
 
 //캔버스 디폴트세팅
-canvas.width = 640;
-canvas.height = 480;
-canvas.style.width = 640 + "px";
-canvas.style.height = 480 + "px";
+// canvas.width = 640;
+// canvas.height = 480;
+// canvas.style.width = 640 + "px";
+// canvas.style.height = 480 + "px";
 let drawing = false; // 마우스 클릭 전까지는 아무것도 그려지면 안된다.
 let strokeColor = "black";
 
 //selection을 위해 사용될 변수
 const overlayCanvas = document.getElementById("drawingCanvas2"); // canvas2에 그려준다.
-overlayCanvas.width = canvas.width;
-overlayCanvas.height = canvas.height;
+// overlayCanvas.width = canvas.width;
+// overlayCanvas.height = canvas.height;
 const overlayCtx = overlayCanvas.getContext("2d");
 overlayCtx.setLineDash([5, 5]); // 선택영역은 점선으로
 overlayCtx.strokeStyle = "blue";

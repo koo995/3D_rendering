@@ -9,28 +9,35 @@
     <title>Freehand Drawing App</title>
   </head>
   <body>
-    <div class="controller">
-      <button id="clearCanvas">Clear Canvas</button>
-      <button id="drawImage">drawing</button>
-      <button id="selectImage">select Image</button>
-      <button id="delete">delete</button>
-      <button id="viewArray">view Array</button>
-      <button id="autoDraw">AutoDraw</button>
+    <div class="main-container">
+      <div class="controller">
+        <button id="clearCanvas">Clear Canvas</button>
+        <button id="drawImage">drawing</button>
+        <button id="selectImage">select Image</button>
+        <button id="delete">delete</button>
+        <button id="viewArray">view Array</button>
+        <button id="autoDraw">AutoDraw</button>
+      </div>
+      <div class="content-container">
+        <div class="canvas-container">
+          {% comment %} canvas 2개 사용 1번은 그림을 그리는 용도, 2번은
+          selection 영역의 사각형을 그리는 용도 {% endcomment %}
+          <canvas
+            id="drawingCanvas1"
+            style="position: absolute; z-index: 1"
+            width="740"
+            height="580"
+          ></canvas>
+          <canvas
+            id="drawingCanvas2"
+            style="position: absolute; z-index: 0"
+            width="740"
+            height="580"
+          ></canvas>
+        </div>
+        <div class="page-3d" width="500" height="500"></div>
+      </div>
     </div>
-    <div class="canvas-container">
-      {% comment %} canvse 2개 사용 1번은 그림을 그리는 용도, 2번은 selection
-      영역의 사각형을 그리는 용도 {% endcomment %}
-      <canvas
-        id="drawingCanvas1"
-        style="position: absolute; left: 0; top: 0; z-index: 1"
-      ></canvas>
-      <canvas
-        id="drawingCanvas2"
-        style="position: absolute; left: 0; top: 0; z-index: 0"
-      ></canvas>
-    </div>
-    <div class="3D_rendering_page"></div>
-
     <script src="{% static 'js/drawing.js' %}"></script>
   </body>
 </html>
