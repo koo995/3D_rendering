@@ -30,11 +30,8 @@ def create_drawing(request):
                 [json.dumps(canvas_lines), json.dumps(result), drawing.created_at]
             )
 
-        # 얻은 카테고리명을 기반으로 3d모델을 나타낼 html파일을 생성
-        new_html_content = render_to_string(
-            "drawing/3d_model.html", {"category": result}
-        )
-        return JsonResponse({"new_html_content": new_html_content})
+        # 얻은 카테고리명을 기반으로 3d모델을 나타낼 html파일로 결과 전달
+        return render(request, "drawing/create_drawing.html", {"category": result})
     else:
         return render(request, "drawing/create_drawing.html")
 

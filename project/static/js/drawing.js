@@ -320,15 +320,15 @@ async function autoDraw() {
       body: JSON.stringify({ processedLines }),
     });
     // result는 3d_model.html 을 포함
-    const result = await response.json();
-    console.log("Result from Django server:", result);
-    const newWindow = window.open(
-      "",
-      "_blank",
-      "width=500, height=500, menubar=no, status=no, toolbar=no"
-    );
-    newWindow.document.write(result.new_html_content);
-    newWindow.document.close();
+    // console.log("Result from Django server:", result);
+    // const result = await response.json();
+    // const newWindow = window.open(
+    //   "",
+    //   "_blank",
+    //   "width=500, height=500, menubar=no, status=no, toolbar=no"
+    // );
+    // newWindow.document.write(result.new_html_content);
+    // newWindow.document.close();
   } catch (error) {
     console.error("Error :", error);
   }

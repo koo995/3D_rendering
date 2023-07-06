@@ -61,7 +61,3 @@ canvas {
 .page-3d canvas {
   position: absolute; /* This allows the canvas to be positioned relative to the .page-3d container */
 }
-
-label {
-  margin-right: 10px;
-}
