@@ -30,7 +30,6 @@ html {
 
 .canvas-container {
   position: relative;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -41,15 +40,11 @@ html {
   margin-top: 30px;
   border: 1px solid #000;
 }
-canvas {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
 
+canvas {
   border: 1px solid #000;
-  width: 740px;
-  height: 580px;
+  width: 100%; /* set canvas width to 100% of its container */
+  height: 100%;
 }
 
 .page-3d {

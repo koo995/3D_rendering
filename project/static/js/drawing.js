@@ -1,4 +1,5 @@
 const canvas = document.getElementById("drawingCanvas1"); //메인 그림은 canvas1에 그려준다
+const overlayCanvas = document.getElementById("drawingCanvas2"); // canvas2에 그려준다.
 const ctx = canvas.getContext("2d");
 const clearCanvasButton = document.getElementById("clearCanvas");
 const selectImageButton = document.getElementById("selectImage");
@@ -36,18 +37,11 @@ let outLineRect = {
   height: 0,
 };
 
-//캔버스 디폴트세팅
-// canvas.width = 640;
-// canvas.height = 480;
-// canvas.style.width = 640 + "px";
-// canvas.style.height = 480 + "px";
+//디폴트세팅
 let drawing = false; // 마우스 클릭 전까지는 아무것도 그려지면 안된다.
 let strokeColor = "black";
 
 //selection을 위해 사용될 변수
-const overlayCanvas = document.getElementById("drawingCanvas2"); // canvas2에 그려준다.
-// overlayCanvas.width = canvas.width;
-// overlayCanvas.height = canvas.height;
 const overlayCtx = overlayCanvas.getContext("2d");
 overlayCtx.setLineDash([5, 5]); // 선택영역은 점선으로
 overlayCtx.strokeStyle = "blue";
@@ -340,6 +334,17 @@ async function autoDraw() {
   }
 }
 
+function resizeCanvas() {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  overlayCanvas.width = overlayCanvas.offsetWidth;
+  overlayCanvas.height = overlayCanvas.offsetHeight;
+  overlayCtx.setLineDash([5, 5]); // 선택영역은 점선으로
+  overlayCtx.strokeStyle = "blue";
+  overlayCtx.lineWidth = 2;
+}
+
+window.addEventListener("resize", resizeCanvas);
 clearCanvasButton.addEventListener("click", clearCanvas);
 selectImageButton.addEventListener("click", selectionModeOn);
 drawImageButton.addEventListener("click", drawImageModeOn);
