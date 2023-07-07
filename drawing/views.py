@@ -31,7 +31,7 @@ def create_drawing(request):
             )
 
         # 얻은 카테고리명을 기반으로 3d모델을 나타낼 html파일로 결과 전달
-        return render(request, "drawing/create_drawing.html", {"category": result})
+        return JsonResponse({"category": result})
     else:
         return render(request, "drawing/create_drawing.html")
 

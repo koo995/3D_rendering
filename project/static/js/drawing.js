@@ -1,3 +1,4 @@
+import { updateModel } from "./three_js.js"; // 끝에 .js 붙여줘야함
 const canvas = document.getElementById("drawingCanvas1"); //메인 그림은 canvas1에 그려준다
 const overlayCanvas = document.getElementById("drawingCanvas2"); // canvas2에 그려준다.
 const ctx = canvas.getContext("2d");
@@ -319,16 +320,13 @@ async function autoDraw() {
       },
       body: JSON.stringify({ processedLines }),
     });
-    // result는 3d_model.html 을 포함
-    // console.log("Result from Django server:", result);
-    // const result = await response.json();
-    // const newWindow = window.open(
-    //   "",
-    //   "_blank",
-    //   "width=500, height=500, menubar=no, status=no, toolbar=no"
-    // );
-    // newWindow.document.write(result.new_html_content);
-    // newWindow.document.close();
+    if (response.ok) {
+      const data = await response.json();
+      document.getElementById("category").innerHTML = data.category;
+      updateModel();
+    } else {
+      console.error("Failed to fetch the data");
+    }
   } catch (error) {
     console.error("Error :", error);
   }

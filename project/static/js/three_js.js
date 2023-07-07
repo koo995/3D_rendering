@@ -2,9 +2,6 @@ import * as THREE from "https://cdn.skypack.dev/three@0.128.0/build/three.module
 import { OrbitControls } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/controls/OrbitControls.js";
 import { FBXLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/FBXLoader.js";
 const container = document.querySelector(".page-3d");
-const categoryElement = document.getElementById("category");
-const category = categoryElement.innerHTML;
-console.log(category); // This will log the category to the console
 
 //scene
 const scene = new THREE.Scene();
@@ -59,18 +56,33 @@ function zoomFit(object3D, camera, viewMode, bFront) {
 }
 
 //loader
+let currentModel;
 const loader = new FBXLoader();
-loader.load(
-  `/drawing/fbx/${category}.fbx`, // 해당주소의 fbx 파일을 요청시 서버에서 제공
-  (object) => {
-    scene.add(object);
-    zoomFit(object, camera, "Z", true);
-  },
-  undefined,
-  (error) => {
-    console.error(error);
+export async function updateModel() {
+  const categoryElement = document.getElementById("category");
+  const category = categoryElement.innerHTML;
+  console.log(category); // This will log the category to the console
+  if (currentModel) {
+    scene.remove(currentModel);
+    console.log("씬제거");
   }
-);
+
+  await loader.load(
+    `/drawing/fbx/${category}.fbx`, // 해당주소의 fbx 파일을 요청시 서버에서 제공
+    // "/drawing/fbx/chair.fbx", // 해당주소의 fbx 파일을 요청시 서버에서 제공
+    (object) => {
+      console.log("오브젝트 받아옴", object);
+      currentModel = object;
+      scene.add(currentModel);
+      zoomFit(currentModel, camera, "Z", true);
+    },
+    undefined,
+    (error) => {
+      console.error(error);
+    }
+  );
+}
+updateModel();
 
 //camera
 const camera = new THREE.PerspectiveCamera(
