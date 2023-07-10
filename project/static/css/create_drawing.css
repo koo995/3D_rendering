@@ -20,6 +20,10 @@ html {
   align-items: center;
 }
 
+#result {
+  margin-left: 20px;
+}
+
 .content-container {
   display: flex;
   justify-content: center;
