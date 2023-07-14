@@ -1,4 +1,5 @@
-import { updateModel } from "./three_js.js"; // 끝에 .js 붙여줘야함
+import { updateModel } from "./three.js"; // 끝에 .js 붙여줘야함
+
 const canvas = document.getElementById("drawingCanvas1"); //메인 그림은 canvas1에 그려준다
 const overlayCanvas = document.getElementById("drawingCanvas2"); // canvas2에 그려준다.
 const ctx = canvas.getContext("2d");
@@ -135,6 +136,7 @@ function drawSelection() {
   overlayCtx.drawImage(overlayCanvas, 0, 0);
 }
 
+// 현재 캔버스상에 그려진 모든 획들(canvasLines)중에서 selectionRect영역 안에 있는 획들을 찾아서 반환
 function getSelectedLines() {
   const selectedLines = [];
   for (const line of canvasLines) {
@@ -289,7 +291,7 @@ function redraw(line) {
   ctx.beginPath();
 }
 
-//좌표들의 전처리를 위함
+//좌표들의 표준화를 위함 (0-255범위 + 4개의 좌표마다 하나씩 샘플링)
 function relativeCoordinates(lines) {
   const { minX, minY, maxX, maxY } = minmaxState;
   let tempLines = [];
@@ -310,7 +312,7 @@ function relativeCoordinates(lines) {
 }
 
 async function autoDraw() {
-  const processedLines = relativeCoordinates(canvasLines);
+  const processedLines = relativeCoordinates(canvasLines); // 벡터값들을 표준화함
   console.log("좌표: ", processedLines);
   try {
     const response = await fetch("http://127.0.0.1:8000/drawing/create/", {
@@ -321,7 +323,7 @@ async function autoDraw() {
       body: JSON.stringify({ processedLines }),
     });
     if (response.ok) {
-      const data = await response.json();
+      const data = await response.json(); // 벡터값에 대한 예측 결과를 받음
       document.getElementById("category").innerHTML = data.category;
       updateModel();
     } else {

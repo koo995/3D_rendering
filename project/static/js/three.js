@@ -59,18 +59,15 @@ function zoomFit(object3D, camera, viewMode, bFront) {
 let currentModel;
 const loader = new FBXLoader();
 export async function updateModel() {
-  const categoryElement = document.getElementById("category");
+  const categoryElement = document.getElementById("category"); //결과로 나타난 카테고리 결과값을 받아옴
   const category = categoryElement.innerHTML;
-  console.log(category); // This will log the category to the console
+  console.log(category);
   if (currentModel) {
     scene.remove(currentModel);
-    console.log("씬제거");
   }
-
   await loader.load(
-    `/drawing/fbx/${category}.fbx`, // 해당주소의 fbx 파일을 요청시 서버에서 제공
+    `/drawing/fbx/${category}.fbx`, // 해당url의 fbx 파일을 요청시 서버에서 제공
     (object) => {
-      console.log("오브젝트 받아옴", object);
       currentModel = object;
       scene.add(currentModel);
       zoomFit(currentModel, camera, "Z", true);
@@ -112,6 +109,7 @@ function animate() {
   renderer.render(scene, camera);
 }
 
+// 윈도우 사이즈 변화에 따른 camera와 renderer을 맞춰줌
 function onWindowResize() {
   camera.aspect = container.clientWidth / container.clientHeight;
   camera.updateProjectionMatrix();
