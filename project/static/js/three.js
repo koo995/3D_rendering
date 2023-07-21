@@ -66,7 +66,9 @@ export async function updateModel() {
     scene.remove(currentModel);
   }
   await loader.load(
-    `/drawing/fbx/${category}.fbx`, // 해당url의 fbx 파일을 요청시 서버에서 제공
+    // 아래의 url에 대해서 urls.py 에 매칭되는 views.py호출하여
+    // fbx 파일을 요청시 서버에서 제공.
+    `/drawing/fbx/${category}.fbx`,
     (object) => {
       currentModel = object;
       scene.add(currentModel);

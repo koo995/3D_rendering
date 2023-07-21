@@ -20,7 +20,7 @@ def create_drawing(request):
         # 데이터베이스에 저장
         drawing = Drawing(
             coordinates=canvas_lines, result=result
-        )  # models.py 안에 있는 Drawing 클래스를 초기화
+        )  # models.py 안에 있는 Drawing 클래스에 해당하는 인스턴스 초기화
         drawing.save()
         # csv파일에 결과 저장
         csv_file = os.path.join(settings.BASE_DIR, "drawings.csv")
