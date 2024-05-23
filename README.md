@@ -4,7 +4,7 @@
 <p>사과, 의자, 컵, 티셔츠만 현재 모델링 가능</P>
 <hr>
 <h3>프로젝트 구조</h3>
-<img src="https://github.com/koo995/3D_rendering/assets/107671886/a5183b11-9ab0-44dd-be5b-4dc989f2d9aa">
+<img src="https://github.com/koo995/3D_rendering/assets/107671886/aca35e97-f791-44a2-b011-ef73e3e1b29a">
 <hr>
 <h3>학술대회 논문</h3>
 <p>이 프로젝트는 한국방송·미디어공학회 2023 하계학술대회에 제출된 논문입니다.</p>
